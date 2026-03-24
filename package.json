@@ -1,0 +1,41 @@
+{
+  "name": "gronet_backend",
+  "version": "1.0.0",
+  "description": "Gronet Backend",
+  "homepage": "https://github.com/Nammaqa/Gronet_backend#readme",
+  "bugs": {
+    "url": "https://github.com/Nammaqa/Gronet_backend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nammaqa/Gronet_backend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "build": "echo \"No build step required\"",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "node prisma/seed.js",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.5.0",
+    "cloudinary": "^2.9.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.1.1",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1",
+    "prisma": "^7.5.0"
+  }
+}

@@ -1,0 +1,6 @@
+import app from './app.js';
+import prisma from './config/database.js';
+
+const PORT = process.env.PORT || 5000;
+
+
