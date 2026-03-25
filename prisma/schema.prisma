@@ -14,11 +14,63 @@ datasource db {
 
 model User {
   id          String   @id @default(cuid())
+  userID      String   @unique
   email       String   @unique
   displayName String
   bio         String?
   avatar      String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime 
+  updatedAt   DateTime @updatedAt
 }
 
+model Message {
+  id         String   @id @default(cuid())
+  content    String
+  senderId   String
+  recipientId String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  sender    User @relation("MessageSender", fields: [senderId], references: [id])
+  recipient User @relation("MessageReceiver", fields: [recipientId], references: [id])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  content   String
+  images    String[] 
+  authorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
+  likes    Like[]
+}
+
+model Like {
+  id     String @id @default(cuid())
+  postId String
+  userId String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  content      String
+  postId       String
+  parentId     String?
+  authorId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  author     User       @relation(fields: [authorId], references: [id])
+  post       Post       @relation(fields: [postId], references: [id])
+  parent     Comment?   @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[]  @relation("CommentReplies")
+}
