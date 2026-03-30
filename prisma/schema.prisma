@@ -193,9 +193,7 @@ model Notification {
 
 model Interest {
   id          String @id @default(cuid())
-  name        String @unique
-  category    String
-  description String?
+  category    Json
   
   users       UserInterest[]
 }
