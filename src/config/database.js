@@ -1,12 +1,21 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config.js';
+import { Sequelize } from 'sequelize';
+import sequelizeConfig from './sequelize.config.js';
 
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-  log: ['query', 'info', 'warn', 'error'],
+const env = process.env.NODE_ENV || 'development';
+const config = sequelizeConfig[env];
+
+if (!config) {
+  throw new Error(`Sequelize config for environment "${env}" not found.`);
+}
+
+const sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  port: config.port,
+  dialect: config.dialect,
+  logging: config.logging,
+  pool: config.pool,
+  dialectOptions: config.dialectOptions,
 });
 
-export default prisma;
+export default sequelize;
