@@ -1,43 +1,47 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const GroupMember = sequelize.define(
-    'GroupMember',
+  const SavedContent = sequelize.define(
+    'SavedContent',
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      groupId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      role: {
-        type: DataTypes.STRING,
-        defaultValue: 'Member',
+      postId: {
+        type: DataTypes.UUID,
+        allowNull: true,
       },
-      joinedAt: {
+      articleId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
+      savedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
     {
-      tableName: 'GroupMembers',
+      tableName: 'SavedContents',
       timestamps: false,
       underscored: false,
       indexes: [
         {
           unique: true,
-          fields: ['groupId', 'userId'],
+          fields: ['userId', 'postId'],
+        },
+        {
+          unique: true,
+          fields: ['userId', 'articleId'],
         },
       ],
     }
   );
 
-  return GroupMember;
+  return SavedContent;
 };

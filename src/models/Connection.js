@@ -13,13 +13,13 @@ export default (sequelize) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      receiverId: {
+      recipientId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
       status: {
-        type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'blocked'),
-        defaultValue: 'pending',
+        type: DataTypes.STRING,
+        defaultValue: 'Pending',
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -34,6 +34,12 @@ export default (sequelize) => {
       tableName: 'Connections',
       timestamps: true,
       underscored: false,
+      indexes: [
+        {
+          unique: true,
+          fields: ['senderId', 'recipientId'],
+        },
+      ],
     }
   );
 
