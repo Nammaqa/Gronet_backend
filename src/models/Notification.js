@@ -1,43 +1,41 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const GroupMember = sequelize.define(
-    'GroupMember',
+  const Notification = sequelize.define(
+    'Notification',
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      groupId: {
-        type: DataTypes.UUID,
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      message: {
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      role: {
-        type: DataTypes.STRING,
-        defaultValue: 'Member',
+      isRead: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
-      joinedAt: {
+      createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
     {
-      tableName: 'GroupMembers',
+      tableName: 'Notifications',
       timestamps: false,
       underscored: false,
-      indexes: [
-        {
-          unique: true,
-          fields: ['groupId', 'userId'],
-        },
-      ],
     }
   );
 
-  return GroupMember;
+  return Notification;
 };

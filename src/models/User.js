@@ -15,7 +15,7 @@ export default (sequelize) => {
         allowNull: true,
       },
       userID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         unique: true,
         allowNull: false,
       },

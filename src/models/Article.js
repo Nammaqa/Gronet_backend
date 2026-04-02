@@ -21,7 +21,7 @@ export default (sequelize) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      coverImage: {
+      category: {
         type: DataTypes.STRING,
         allowNull: true,
       },
