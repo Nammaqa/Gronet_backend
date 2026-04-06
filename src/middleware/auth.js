@@ -71,3 +71,60 @@ const authenticateToken = async (req, res, next) => {
 };
 
 export default authenticateToken;
+
+// import jwt from 'jsonwebtoken';
+// import { User } from '../models/index.js';
+
+// const authenticateToken = async (req, res, next) => {
+//   try {
+
+//     const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+
+//     if (!token) {
+//       return res.status(401).json({
+//         success: false,
+//         message: 'Access token is required',
+//       });
+//     }
+
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+//     const { enquiryId, email } = decoded;
+
+//     if (!enquiryId || !email) {
+//       return res.status(403).json({
+//         success: false,
+//         message: 'Invalid token payload',
+//       });
+//     }
+
+//     const user = await User.findOne({
+//       where: { userID: enquiryId },
+//     });
+
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: 'User not found',
+//       });
+//     }
+
+//     req.user = {
+//       id: user.id,
+//       userID: user.userID,
+//       email: user.email,
+//     };
+
+//     next();
+//   } catch (error) {
+//     console.error('Auth middleware error:', error.message);
+
+//     return res.status(403).json({
+//       success: false,
+//       message: 'Invalid or expired token',
+//     });
+//   }
+// };
+
+// export default authenticateToken;
