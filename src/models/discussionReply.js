@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Discussion = sequelize.define(
-    'Discussion',
+  const DiscussionReply = sequelize.define(
+    'DiscussionReply',
     {
       id: {
         type: DataTypes.UUID,
@@ -10,43 +10,24 @@ export default (sequelize) => {
         primaryKey: true,
       },
 
+      discussionId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+
       authorId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
 
-      groupId: {
+      parentReplyId: {
         type: DataTypes.UUID,
-        allowNull: false,
-      },
-
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
 
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
-      },
-
-      coverImage: {
-        type: DataTypes.STRING,
-      },
-
-      tags: {
-        type: DataTypes.JSONB,
-        defaultValue: [],
-      },
-
-      isPublic: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-      },
-
-      isDraft: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
       },
 
       createdAt: {
@@ -60,10 +41,10 @@ export default (sequelize) => {
       },
     },
     {
-      tableName: 'Discussions',
+      tableName: 'DiscussionReplies',
       timestamps: true,
     }
   );
 
-  return Discussion;
+  return DiscussionReply;
 };

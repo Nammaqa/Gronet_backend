@@ -9,39 +9,44 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+
       name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      description: {
+
+      about: {
         type: DataTypes.TEXT,
-        allowNull: true,
-      },
-      ownerId: {
-        type: DataTypes.UUID,
         allowNull: false,
       },
-      avatar: {
+
+      industry: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
-      isPublic: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+
+      guidelines: {
+        type: DataTypes.TEXT,
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+
+      type: {
+        type: DataTypes.ENUM('public', 'private'),
+        defaultValue: 'public',
       },
-      updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+
+      status: {
+        type: DataTypes.ENUM('active', 'inactive'),
+        defaultValue: 'active',
+      },
+
+      createdBy: {
+        type: DataTypes.UUID,
+        allowNull: false,
       },
     },
     {
       tableName: 'Groups',
       timestamps: true,
-      underscored: false,
     }
   );
 

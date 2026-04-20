@@ -35,27 +35,26 @@ const authenticateToken = async (req, res, next) => {
     }
 
     // Check if user exists by enquiryId
-    let user = await User.findOne({
-      where: { userID: enquiryId },
-    });
+const enquiryIdStr = String(enquiryId);
 
-    if (user) {
-      // Update existing user with latest data
-      await user.update({
-        userID: enquiryId || user.userID,
-        email: email || user.email,
-        ...(name && { displayName: name }),
-      });
-    } else {
-      // Create new user
-      user = await User.create({
-        enquiryID: enquiryId,
-        userID: enquiryId,
-        email,
-        displayName: name || email.split('@')[0],
-      });
-    }
+let user = await User.findOne({
+  where: { userID: enquiryIdStr },
+});
 
+if (user) {
+  await user.update({
+    userID: enquiryIdStr,
+    email: email || user.email,
+    ...(name && { displayName: name }),
+  });
+} else {
+  user = await User.create({
+    enquiryID: enquiryIdStr,
+    userID: enquiryIdStr,
+    email,
+    displayName: name || email.split('@')[0],
+  });
+}
     // Attach user to request object
     req.user = user;
 
@@ -71,6 +70,9 @@ const authenticateToken = async (req, res, next) => {
 };
 
 export default authenticateToken;
+
+
+
 
 // import jwt from 'jsonwebtoken';
 // import { User } from '../models/index.js';

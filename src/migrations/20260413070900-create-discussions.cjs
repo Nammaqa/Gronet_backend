@@ -1,34 +1,58 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Discussions', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      content: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-      },
+
       authorId: {
         type: Sequelize.UUID,
         allowNull: false,
       },
+
+      groupId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+      },
+
+      title: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+
+      content: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+
+      coverImage: {
+        type: Sequelize.STRING,
+      },
+
       tags: {
-        type: Sequelize.JSON,
+        type: Sequelize.JSONB,
         defaultValue: [],
       },
+
+      isPublic: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+      },
+
+      isDraft: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+
       createdAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+
       updatedAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
@@ -36,7 +60,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('Discussions');
-  }
+  },
 };

@@ -1,7 +1,18 @@
 import express from 'express';
-// import { createGroup, getGroups, getGroupById, updateGroup, deleteGroup, joinGroup, leaveGroup, getGroupMembers } from '../controllers/groupController.js';
 import authenticateToken from '../middleware/auth.js';
 
+import {
+  createGroupController,
+  getAllGroupsController,
+  getGroupByIdController
+} from '../controllers/groupController.js';
+
 const router = express.Router();
+
+router.post('/', authenticateToken, createGroupController);
+
+router.get('/', authenticateToken, getAllGroupsController);
+
+router.get('/:id', authenticateToken, getGroupByIdController);
 
 export default router;

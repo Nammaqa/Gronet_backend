@@ -1,69 +1,46 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Discussion = sequelize.define(
-    'Discussion',
+  const UserSettings = sequelize.define(
+    'UserSettings',
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-
-      authorId: {
+      userId: {
         type: DataTypes.UUID,
         allowNull: false,
+        unique: true,
       },
-
-      groupId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-
-      coverImage: {
-        type: DataTypes.STRING,
-      },
-
-      tags: {
-        type: DataTypes.JSONB,
-        defaultValue: [],
-      },
-
-      isPublic: {
+      emailNotifications: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
-
-      isDraft: {
+      pushNotifications: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        defaultValue: true,
       },
-
+      privacyLevel: {
+        type: DataTypes.STRING,
+        defaultValue: 'public',
+      },
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-
       updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
     {
-      tableName: 'Discussions',
+      tableName: 'UserSettings',
       timestamps: true,
+      underscored: false,
     }
   );
 
-  return Discussion;
+  return UserSettings;
 };

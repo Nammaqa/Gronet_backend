@@ -1,47 +1,47 @@
 import { DataTypes } from 'sequelize';
 
 export default (sequelize) => {
-  const Connection = sequelize.define(
-    'Connection',
+  const SavedContent = sequelize.define(
+    'SavedContent',
     {
       id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      senderId: {
+      userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      recipientId: {
+      postId: {
         type: DataTypes.UUID,
-        allowNull: false,
+        allowNull: true,
       },
-      status: {
-        type: DataTypes.STRING,
-        defaultValue: 'Pending',
+      articleId: {
+        type: DataTypes.UUID,
+        allowNull: true,
       },
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
+      savedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
     {
-      tableName: 'Connections',
-      timestamps: true,
+      tableName: 'SavedContents',
+      timestamps: false,
       underscored: false,
       indexes: [
         {
           unique: true,
-          fields: ['senderId', 'recipientId'],
+          fields: ['userId', 'postId'],
+        },
+        {
+          unique: true,
+          fields: ['userId', 'articleId'],
         },
       ],
     }
   );
 
-  return Connection;
+  return SavedContent;
 };
