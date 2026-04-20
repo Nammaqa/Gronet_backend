@@ -34,6 +34,11 @@ export default (sequelize) => {
         type: DataTypes.STRING,
       },
 
+      images: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+      },
+
       tags: {
         type: DataTypes.JSONB,
         defaultValue: [],

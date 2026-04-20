@@ -29,6 +29,11 @@ export default (sequelize) => {
         type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         defaultValue: 'pending',
       },
+
+      joinedAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       tableName: 'GroupMembers',
