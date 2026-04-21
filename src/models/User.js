@@ -28,7 +28,12 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      
       displayName: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      designation: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -40,6 +45,15 @@ export default (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      coverPhoto: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      skills: {
+        type: DataTypes.JSON,
+        defaultValue: [],
+      },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -52,7 +66,6 @@ export default (sequelize) => {
     {
       tableName: 'Users',
       timestamps: true,
-      underscored: false,
     }
   );
 

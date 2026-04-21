@@ -9,14 +9,17 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
       interestId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -25,7 +28,6 @@ export default (sequelize) => {
     {
       tableName: 'UserInterests',
       timestamps: false,
-      underscored: false,
       indexes: [
         {
           unique: true,

@@ -9,34 +9,62 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
-      images: {
-        type: DataTypes.JSON,
-        defaultValue: [],
-      },
+
       authorId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      groupId: {
-        type: DataTypes.UUID,
+
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      content: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+
+      coverImage: {
+        type: DataTypes.STRING,
         allowNull: true,
       },
-      isPublic: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+
+      images: {
+        type: DataTypes.JSON,
+        defaultValue: [],
       },
+
+      community: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      industry: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
       tags: {
         type: DataTypes.JSON,
         defaultValue: [],
       },
+
+      isPublic: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
+
+      isDraft: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+
       updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -45,7 +73,6 @@ export default (sequelize) => {
     {
       tableName: 'Posts',
       timestamps: true,
-      underscored: false,
     }
   );
 

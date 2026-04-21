@@ -8,8 +8,12 @@ import groupRoutes from './groups.js';
 import messageRoutes from './messages.js';
 import connectionRoutes from './connections.js';
 import articleRoutes from './articles.js';
-import uploadRoutes from './upload.js';
 import profileRoutes from './profile.js';
+import interestRoutes from './interests.js';
+import discussionReplyRoutes from './discussionReplies.js';
+import groupMemberRoutes from './groupMembers.js';
+
+
 
 const router = express.Router();
 
@@ -21,9 +25,11 @@ router.use('/api/posts', postRoutes);
 router.use('/api/discussions', discussionRoutes);
 router.use('/api/comments', commentRoutes);
 router.use('/api/groups', groupRoutes);
+router.use('/api/group-members', groupMemberRoutes);
 router.use('/api/messages', messageRoutes);
 router.use('/api/connections', connectionRoutes);
 router.use('/api/articles', articleRoutes);
-router.use('/api/upload', uploadRoutes);
+router.use('/api/interests', interestRoutes);
+router.use('/api/discussion-replies', discussionReplyRoutes);
 
 export default router;

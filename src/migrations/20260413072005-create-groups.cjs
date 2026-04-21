@@ -1,38 +1,49 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Groups', {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: Sequelize.literal('gen_random_uuid()'),
         primaryKey: true,
       },
+
       name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
+
+      about: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
+
+      industry: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+
+      guidelines: {
         type: Sequelize.TEXT,
         allowNull: true,
       },
-      ownerId: {
+
+      type: {
+        type: Sequelize.ENUM('public', 'private'),
+        defaultValue: 'public',
+      },
+
+      createdBy: {
         type: Sequelize.UUID,
         allowNull: false,
       },
-      avatar: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      isPublic: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: true,
-      },
+
       createdAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
       },
+
       updatedAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW,
@@ -40,7 +51,7 @@ module.exports = {
     });
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('Groups');
-  }
+  },
 };
