@@ -9,31 +9,69 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      type: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      message: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
+
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
+      type: {
+        type: DataTypes.ENUM(
+          'message',
+          'connection_request',
+          'connection_accepted',
+          'post_like',
+          'comment'
+        ),
+        allowNull: false,
+      },
+
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      message: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+
+      referenceId: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
+
       isRead: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+
       createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+
+      updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
     },
     {
       tableName: 'Notifications',
-      timestamps: false,
-      underscored: false,
+
+      timestamps: true,
+
+      indexes: [
+        {
+          fields: ['userId'],
+        },
+        {
+          fields: ['isRead'],
+        },
+        {
+          fields: ['createdAt'],
+        },
+      ],
     }
   );
 

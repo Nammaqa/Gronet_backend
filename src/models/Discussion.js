@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import { nanoid } from 'nanoid';
 
 export default (sequelize) => {
   const Discussion = sequelize.define(
@@ -54,6 +55,12 @@ export default (sequelize) => {
         defaultValue: false,
       },
 
+      slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -67,6 +74,13 @@ export default (sequelize) => {
     {
       tableName: 'Discussions',
       timestamps: true,
+      hooks: {
+        beforeValidate: (discussion) => {
+          if (!discussion.slug) {
+            discussion.slug = nanoid(8); 
+          }
+        },
+      },
     }
   );
 

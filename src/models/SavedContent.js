@@ -9,18 +9,22 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      postId: {
+
+      contentId: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: false,
       },
-      articleId: {
-        type: DataTypes.UUID,
-        allowNull: true,
+
+      contentType: {
+        type: DataTypes.ENUM('post', 'discussion', 'article'),
+        allowNull: false,
       },
+
       savedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -29,15 +33,11 @@ export default (sequelize) => {
     {
       tableName: 'SavedContents',
       timestamps: false,
-      underscored: false,
+
       indexes: [
         {
           unique: true,
-          fields: ['userId', 'postId'],
-        },
-        {
-          unique: true,
-          fields: ['userId', 'articleId'],
+          fields: ['userId', 'contentId', 'contentType'],
         },
       ],
     }

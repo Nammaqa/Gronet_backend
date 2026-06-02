@@ -1,18 +1,27 @@
-const validate = (schema) => (req, res, next) => {
-  const { error, value } = schema.validate(req.body, {
-    abortEarly: true,
-    stripUnknown: true,
-  });
+// middleware/validate.js
 
-  if (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.details[0].message,
+export default (schema, property = 'body') => {
+  return (req, res, next) => {
+    const { error, value } = schema.validate(req[property], {
+      abortEarly: false,
+      stripUnknown: true,
     });
-  }
 
-  req.body = value;
-  next();
+    if (error) {
+      return res.status(400).json({
+        success: false,
+
+        message: 'Validation failed',
+
+        errors: error.details.map((err) => ({
+          field: err.path.join('.'),
+          message: err.message.replace(/"/g, ''),
+        })),
+      });
+    }
+
+    req[property] = value;
+
+    next();
+  };
 };
-
-export default validate;

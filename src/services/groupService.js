@@ -1,66 +1,14 @@
-// import { Group, GroupMember } from '../models/index.js';
+import {
+  Group,
+  GroupMember,
+} from '../models/index.js';
 
-// export const createGroup = async (userId, data) => {
-//   try {
-//     const group = await Group.create({
-//       ...data,
-//       createdBy: userId,
-//       status: 'active',
-//     });
-
-//     if (!group || !group.id) {
-//       throw new Error('Group creation failed');
-//     }
-
-//     await GroupMember.create({
-//       userId,
-//       groupId: group.id,
-//       role: 'admin',
-//       status: 'approved',
-//     });
-
-//     return group;
-
-//   } catch (error) {
-//     console.error('createGroup failed:', error);
-//     throw error;
-//   }
-// };
-
-// export const getAllGroups = async () => {
-//   try {
-//     return await Group.findAll({
-//       order: [['createdAt', 'DESC']],
-//     });
-//   } catch (error) {
-//     console.error('getAllGroups failed:', error.message);
-//     throw new Error('Failed to fetch groups');
-//   }
-// };
-
-// export const getGroupById = async (id) => {
-//   try {
-//     const group = await Group.findByPk(id);
-
-//     if (!group) {
-//       throw new Error('Group not found');
-//     }
-
-//     return group;
-
-//   } catch (error) {
-//     console.error('getGroupById failed:', error.message);
-//     throw error;
-//   }
-// };
-
-
-
-
-import { Group, GroupMember } from '../models/index.js';
-
-export const createGroup = async (userId, data) => {
-  const t = await Group.sequelize.transaction();
+export const createGroup = async (
+  userId,
+  data
+) => {
+  const t =
+    await Group.sequelize.transaction();
 
   try {
     const group = await Group.create(
@@ -69,12 +17,10 @@ export const createGroup = async (userId, data) => {
         createdBy: userId,
         status: 'active',
       },
-      { transaction: t }
+      {
+        transaction: t,
+      }
     );
-
-    if (!group || !group.id) {
-      throw new Error('Group creation failed');
-    }
 
     await GroupMember.create(
       {
@@ -83,66 +29,152 @@ export const createGroup = async (userId, data) => {
         role: 'admin',
         status: 'approved',
       },
-      { transaction: t }
+      {
+        transaction: t,
+      }
     );
 
     await t.commit();
+
     return group;
 
-  } catch (error) {
+  } catch (err) {
     await t.rollback();
 
-    console.error('createGroup failed:', error);
+    const error = new Error(
+      'Group creation failed'
+    );
 
-    throw {
-      message: 'Group creation failed',
-      originalError: error.message,
-      status: 500,
-    };
+    error.status = 500;
+
+    throw error;
   }
 };
 
-
-export const getAllGroups = async () => {
-  try {
-    const groups = await Group.findAll({
-      order: [['createdAt', 'DESC']],
+export const getAllGroups =
+  async () => {
+    return await Group.findAll({
+      order: [
+        ['createdAt', 'DESC'],
+      ],
     });
+  };
 
-    return groups;
-
-  } catch (error) {
-    console.error('getAllGroups failed:', error);
-
-    throw {
-      message: 'Failed to fetch groups',
-      originalError: error.message,
-      status: 500,
-    };
-  }
-};
-
-
-export const getGroupById = async (id) => {
-  try {
-    const group = await Group.findByPk(id);
+export const getGroupById =
+  async (id) => {
+    const group =
+      await Group.findByPk(id);
 
     if (!group) {
-      throw {
-        message: 'Group not found',
-        status: 404,
-      };
+      const error = new Error(
+        'Group not found'
+      );
+
+      error.status = 404;
+
+      throw error;
     }
 
     return group;
+  };
 
-  } catch (error) {
-    console.error('getGroupById failed:', error);
+export const updateGroup =
+  async (
+    id,
+    userId,
+    data
+  ) => {
+    const group =
+      await Group.findByPk(id);
 
-    throw {
-      message: error.message || 'Failed to fetch group',
-      originalError: error.originalError || error.message,
-      status: error.status || 500,
-    };
+    if (!group) {
+      const error = new Error(
+        'Group not found'
+      );
+
+      error.status = 404;
+
+      throw error;
+    }
+
+    if (
+      group.createdBy !== userId
+    ) {
+      const error = new Error(
+        'Unauthorized'
+      );
+
+      error.status = 403;
+
+      throw error;
+    }
+
+    const allowedFields = [
+      'name',
+      'about',
+      'industry',
+      'guidelines',
+      'type',
+      'status',
+    ];
+
+    const filteredData = {};
+
+    for (const field of allowedFields) {
+      if (
+        data[field] !== undefined
+      ) {
+        filteredData[field] =
+          data[field];
+      }
+    }
+
+    await group.update(
+      filteredData
+    );
+
+    return group;
+  };
+
+  export const deleteGroup = async (
+  id,
+  userId
+) => {
+  const group =
+    await Group.findByPk(id);
+
+  if (!group) {
+    const error = new Error(
+      'Group not found'
+    );
+
+    error.status = 404;
+
+    throw error;
   }
+
+  if (
+    group.createdBy !== userId
+  ) {
+    const error = new Error(
+      'Unauthorized'
+    );
+
+    error.status = 403;
+
+    throw error;
+  }
+
+  await GroupMember.destroy({
+    where: {
+      groupId: id,
+    },
+  });
+
+  await group.destroy();
+
+  return {
+    message:
+      'Group deleted successfully',
+  };
 };

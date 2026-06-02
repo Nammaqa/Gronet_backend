@@ -9,14 +9,26 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      postId: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
+
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
+      contentId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+
+      contentType: {
+        type: DataTypes.ENUM(
+          'post',
+          'discussion',
+          'article'
+        ),
+        allowNull: false,
+      },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -24,12 +36,18 @@ export default (sequelize) => {
     },
     {
       tableName: 'Likes',
+
       timestamps: false,
-      underscored: false,
+
       indexes: [
         {
           unique: true,
-          fields: ['postId', 'userId'],
+
+          fields: [
+            'userId',
+            'contentId',
+            'contentType',
+          ],
         },
       ],
     }

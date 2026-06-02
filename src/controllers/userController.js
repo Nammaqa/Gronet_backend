@@ -1,4 +1,4 @@
-import prisma from '../config/database.js';
+
 
 export const getProfile = (req, res) => {
   res.json({
