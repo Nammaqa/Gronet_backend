@@ -1,13 +1,31 @@
+import http from 'http';
+
 import app from './app.js';
 import sequelize from './config/database.js';
 
+import { initSocket } from './socket/socket.js';
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
+const server = http.createServer(app);
 
-sequelize.authenticate()
-  .then(() => console.log("✅ DB CONNECTED"))
-  .catch(err => console.error("❌ DB ERROR:", err));
+initSocket(server);
+
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+
+    console.log('✅ DB CONNECTED');
+
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('❌ DB CONNECTION FAILED:', error);
+
+    process.exit(1);
+  }
+};
+
+startServer();

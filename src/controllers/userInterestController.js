@@ -77,10 +77,3 @@ export const fetchMyInterests = async (req, res, next) => {
   }
 };
 
-// export const updateInterests = (req, res) => {
-//   res.json({ msg: "update works" });
-// };
-
-// export const fetchMyInterests = (req, res) => {
-//   res.json({ msg: "fetch works" });
-// };

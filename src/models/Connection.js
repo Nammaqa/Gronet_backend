@@ -9,37 +9,40 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+
       senderId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
       recipientId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
       status: {
-        type: DataTypes.STRING,
-        defaultValue: 'Pending',
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+        type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+        defaultValue: 'pending',
       },
     },
     {
       tableName: 'Connections',
       timestamps: true,
-      underscored: false,
+
       indexes: [
         {
           unique: true,
           fields: ['senderId', 'recipientId'],
         },
       ],
+
+      validate: {
+        notSelfConnection() {
+          if (this.senderId === this.recipientId) {
+            throw new Error('Cannot connect with yourself');
+          }
+        },
+      },
     }
   );
 

@@ -1,4 +1,5 @@
 import { DataTypes } from 'sequelize';
+import { nanoid } from 'nanoid';
 
 export default (sequelize) => {
   const Post = sequelize.define(
@@ -60,19 +61,23 @@ export default (sequelize) => {
         defaultValue: false,
       },
 
-      createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-      },
-
-      updatedAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+      slug: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
       },
     },
     {
       tableName: 'Posts',
       timestamps: true,
+
+      hooks: {
+        beforeValidate: (post) => {
+          if (!post.slug) {
+            post.slug = nanoid(8);
+          }
+        },
+      },
     }
   );
 

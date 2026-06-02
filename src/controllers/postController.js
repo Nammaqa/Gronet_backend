@@ -8,9 +8,11 @@ export const createPostController = async (req, res) => {
       success: true,
       data: post,
     });
-
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -19,7 +21,6 @@ export const getFeedController = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     const result = await postService.getFeed(
-      req.user.id,
       parseInt(page),
       parseInt(limit)
     );
@@ -28,11 +29,8 @@ export const getFeedController = async (req, res) => {
       success: true,
       ...result,
     });
-
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
+    res.status(error.status || 500).json({
       success: false,
       message: error.message,
     });
@@ -43,14 +41,15 @@ export const getPostController = async (req, res) => {
   try {
     const post = await postService.getPostById(req.params.id);
 
-    if (!post) {
-      return res.status(404).json({ success: false });
-    }
-
-    res.json({ success: true, data: post });
-
-  } catch {
-    res.status(500).json({ success: false });
+    res.json({
+      success: true,
+      data: post,
+    });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -62,20 +61,33 @@ export const updatePostController = async (req, res) => {
       req.body
     );
 
-    res.json({ success: true, data: post });
-
+    res.json({
+      success: true,
+      data: post,
+    });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
 export const deletePostController = async (req, res) => {
   try {
-    await postService.deletePost(req.params.id, req.user.id);
+    const result = await postService.deletePost(
+      req.params.id,
+      req.user.id
+    );
 
-    res.json({ success: true, message: 'Deleted successfully' });
-
+    res.json({
+      success: true,
+      data: result,
+    });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

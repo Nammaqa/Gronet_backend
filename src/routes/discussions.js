@@ -5,6 +5,8 @@ import validate from '../middleware/validate.js';
 import {
   createDiscussionSchema,
   updateDiscussionSchema,
+  idParamSchema,
+  groupParamSchema,
 } from '../validations/discussionValidation.js';
 
 import {
@@ -28,19 +30,32 @@ router.post(
 router.get(
   '/group/:groupId',
   authenticateToken,
+  validate(groupParamSchema, 'params'),
   getDiscussionsByGroupController
 );
 
-router.get('/:id', authenticateToken, getDiscussionController);
+router.get(
+  '/:id',
+  authenticateToken,
+  validate(idParamSchema, 'params'),
+  getDiscussionController
+);
+
 router.get('/', authenticateToken, getAllDiscussionsController);
 
 router.put(
   '/:id',
   authenticateToken,
+  validate(idParamSchema, 'params'),
   validate(updateDiscussionSchema),
   updateDiscussionController
 );
 
-router.delete('/:id', authenticateToken, deleteDiscussionController);
+router.delete(
+  '/:id',
+  authenticateToken,
+  validate(idParamSchema, 'params'),
+  deleteDiscussionController
+);
 
 export default router;

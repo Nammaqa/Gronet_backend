@@ -38,60 +38,82 @@ const UserInterest = UserInterestModel(sequelize);
 const SavedContent = SavedContentModel(sequelize);
 const UserSettings = UserSettingsModel(sequelize);
 
+/* =========================
+   ASSOCIATIONS
+========================= */
+
+// Messages
 User.hasMany(Message, { foreignKey: 'senderId', as: 'sentMessages' });
 User.hasMany(Message, { foreignKey: 'recipientId', as: 'receivedMessages' });
 
 Message.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
 Message.belongsTo(User, { foreignKey: 'recipientId', as: 'recipient' });
 
+// Posts
 User.hasMany(Post, { foreignKey: 'authorId' });
 Post.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 
-User.hasMany(Comment, { foreignKey: 'authorId' });
-Comment.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
+// COMMENTS
 
-Post.hasMany(Comment, { foreignKey: 'postId' });
-Comment.belongsTo(Post, { foreignKey: 'postId' });
+User.hasMany(Comment, {
+  foreignKey: 'authorId',
+});
 
-User.hasMany(Like, { foreignKey: 'userId' });
-Like.belongsTo(User, { foreignKey: 'userId' });
+Comment.belongsTo(User, {
+  foreignKey: 'authorId',
+  as: 'author',
+});
 
-Post.hasMany(Like, { foreignKey: 'postId' });
-Like.belongsTo(Post, { foreignKey: 'postId' });
+// Likes
+User.hasMany(Like, {
+  foreignKey: 'userId',
+});
 
+Like.belongsTo(User, {
+  foreignKey: 'userId',
+});
+
+// Groups
 Group.belongsTo(User, { foreignKey: 'createdBy', as: 'owner' });
 User.hasMany(Group, { foreignKey: 'createdBy', as: 'ownedGroups' });
 
+// Group Members
 User.hasMany(GroupMember, { foreignKey: 'userId' });
 GroupMember.belongsTo(User, { foreignKey: 'userId' });
 
 Group.hasMany(GroupMember, { foreignKey: 'groupId' });
 GroupMember.belongsTo(Group, { foreignKey: 'groupId' });
 
+// Connections
 User.hasMany(Connection, { foreignKey: 'senderId', as: 'sentConnections' });
 User.hasMany(Connection, { foreignKey: 'recipientId', as: 'receivedConnections' });
 
 Connection.belongsTo(User, { foreignKey: 'senderId', as: 'sender' });
 Connection.belongsTo(User, { foreignKey: 'recipientId', as: 'recipient' });
 
+// Discussions
 User.hasMany(Discussion, { foreignKey: 'authorId' });
 Discussion.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 
 Group.hasMany(Discussion, { foreignKey: 'groupId' });
 Discussion.belongsTo(Group, { foreignKey: 'groupId' });
 
+// Discussion Replies
 Discussion.hasMany(DiscussionReply, { foreignKey: 'discussionId' });
 DiscussionReply.belongsTo(Discussion, { foreignKey: 'discussionId' });
 
-User.hasMany(DiscussionReply, { foreignKey: 'userId' });
-DiscussionReply.belongsTo(User, { foreignKey: 'userId', as: 'author' });
+User.hasMany(DiscussionReply, { foreignKey: 'authorId' });
+DiscussionReply.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 
+// Articles
 User.hasMany(Article, { foreignKey: 'authorId' });
 Article.belongsTo(User, { foreignKey: 'authorId', as: 'author' });
 
+// Notifications
 User.hasMany(Notification, { foreignKey: 'userId' });
 Notification.belongsTo(User, { foreignKey: 'userId' });
 
+// Interests
 User.hasMany(UserInterest, { foreignKey: 'userId', as: 'userInterests' });
 UserInterest.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
@@ -110,21 +132,21 @@ Interest.belongsToMany(User, {
   as: 'users',
 });
 
+// Saved Content (ONLY user relation)
 User.hasMany(SavedContent, { foreignKey: 'userId' });
 SavedContent.belongsTo(User, { foreignKey: 'userId' });
 
-Post.hasMany(SavedContent, { foreignKey: 'postId', as: 'savedBy' });
-SavedContent.belongsTo(Post, { foreignKey: 'postId', as: 'post' });
-
-Article.hasMany(SavedContent, { foreignKey: 'articleId', as: 'savedBy' });
-SavedContent.belongsTo(Article, { foreignKey: 'articleId', as: 'article' });
-
+// User Settings
 User.hasOne(UserSettings, { foreignKey: 'userId' });
 UserSettings.belongsTo(User, { foreignKey: 'userId' });
 
+// Nested Comments
 Comment.hasMany(Comment, { foreignKey: 'parentId', as: 'replies' });
 Comment.belongsTo(Comment, { foreignKey: 'parentId', as: 'parent' });
 
+/* =========================
+   EXPORTS
+========================= */
 
 export {
   sequelize,

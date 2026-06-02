@@ -1,15 +1,22 @@
 import { Discussion, DiscussionReply } from '../models/index.js';
+
 export const createReply = async (userId, data) => {
   const { discussionId, parentReplyId, content } = data;
 
-  if (!content) throw new Error('Content required');
-
   const discussion = await Discussion.findByPk(discussionId);
-  if (!discussion) throw new Error('Discussion not found');
+  if (!discussion) {
+    const error = new Error('Discussion not found');
+    error.status = 404;
+    throw error;
+  }
 
   if (parentReplyId) {
     const parent = await DiscussionReply.findByPk(parentReplyId);
-    if (!parent) throw new Error('Parent reply not found');
+    if (!parent) {
+      const error = new Error('Parent reply not found');
+      error.status = 404;
+      throw error;
+    }
   }
 
   return await DiscussionReply.create({
@@ -41,10 +48,8 @@ export const getRepliesTree = async (discussionId) => {
   const tree = [];
 
   data.forEach(reply => {
-    if (reply.parentReplyId) {
-      if (map[reply.parentReplyId]) {
-        map[reply.parentReplyId].replies.push(map[reply.id]);
-      }
+    if (reply.parentReplyId && map[reply.parentReplyId]) {
+      map[reply.parentReplyId].replies.push(map[reply.id]);
     } else {
       tree.push(map[reply.id]);
     }

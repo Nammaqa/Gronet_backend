@@ -1,80 +1,119 @@
 import * as service from '../services/groupService.js';
 
-export const createGroupController = async (req, res) => {
-  try {
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
+export const createGroupController =
+  async (req, res) => {
+    try {
+      const group =
+        await service.createGroup(
+          req.user.id,
+          req.body
+        );
+
+      return res.status(201).json({
+        success: true,
+        data: group,
+      });
+
+    } catch (error) {
+      return res.status(
+        error.status || 500
+      ).json({
         success: false,
-        message: 'Unauthorized',
+        message: error.message,
       });
     }
+  };
 
-    const { name, about, industry, guidelines, type } = req.body;
+export const getAllGroupsController =
+  async (req, res) => {
+    try {
+      const groups =
+        await service.getAllGroups();
 
-    if (!name || !about || !industry) {
-      return res.status(400).json({
+      return res.json({
+        success: true,
+        data: groups,
+      });
+
+    } catch (error) {
+      return res.status(
+        error.status || 500
+      ).json({
         success: false,
-        message: 'Required fields missing',
+        message: error.message,
       });
     }
+  };
 
-    const group = await service.createGroup(req.user.id, {
-      name,
-      about,
-      industry,
-      guidelines,
-      type,
-    });
+export const getGroupByIdController =
+  async (req, res) => {
+    try {
+      const group =
+        await service.getGroupById(
+          req.params.id
+        );
 
-    return res.status(201).json({
-      success: true,
-      data: group,
-    });
+      return res.json({
+        success: true,
+        data: group,
+      });
 
-  } catch (error) {
-    console.error("CREATE GROUP ERROR:", error);
+    } catch (error) {
+      return res.status(
+        error.status || 500
+      ).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+export const updateGroupController =
+  async (req, res) => {
+    try {
+      const group =
+        await service.updateGroup(
+          req.params.id,
+          req.user.id,
+          req.body
+        );
 
-export const getAllGroupsController = async (req, res) => {
-  try {
-    const groups = await service.getAllGroups();
+      return res.json({
+        success: true,
+        data: group,
+      });
 
-    return res.json({
-      success: true,
-      data: groups,
-    });
+    } catch (error) {
+      return res.status(
+        error.status || 500
+      ).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 
-  } catch (error) {
-    console.error("GET ALL GROUPS ERROR:", error);
+  export const deleteGroupController =
+  async (req, res) => {
+    try {
+      const result =
+        await service.deleteGroup(
+          req.params.id,
+          req.user.id
+        );
 
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+      return res.json({
+        success: true,
+        data: result,
+      });
 
-export const getGroupByIdController = async (req, res) => {
-  try {
-    const group = await service.getGroupById(req.params.id);
-
-    return res.json({
-      success: true,
-      data: group,
-    });
-
-  } catch (error) {
-    console.error("GET GROUP ERROR:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+    } catch (error) {
+      return res.status(
+        error.status || 500
+      ).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  };

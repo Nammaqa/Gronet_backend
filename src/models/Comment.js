@@ -9,30 +9,41 @@ export default (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
+
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      postId: {
+
+      contentId: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: false,
       },
-      discussionId: {
-        type: DataTypes.UUID,
-        allowNull: true,
+
+      contentType: {
+        type: DataTypes.ENUM(
+          'post',
+          'discussion',
+          'article'
+        ),
+        allowNull: false,
       },
+
       parentId: {
         type: DataTypes.UUID,
         allowNull: true,
       },
+
       authorId: {
         type: DataTypes.UUID,
         allowNull: false,
       },
+
       createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+
       updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -40,8 +51,20 @@ export default (sequelize) => {
     },
     {
       tableName: 'Comments',
+
       timestamps: true,
-      underscored: false,
+
+      indexes: [
+        {
+          fields: ['contentId'],
+        },
+        {
+          fields: ['contentType'],
+        },
+        {
+          fields: ['authorId'],
+        },
+      ],
     }
   );
 

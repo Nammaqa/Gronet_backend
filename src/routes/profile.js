@@ -1,22 +1,58 @@
 import express from 'express';
+
 import authenticateToken from '../middleware/auth.js';
+import validate from '../middleware/validate.js';
+
 import upload from '../middleware/upload.js';
 
 import {
-  getProfile,
-  getProfileByUserID,
-  updateProfile,
-  uploadAvatar,
-  uploadCoverPhoto,
+  updateProfileSchema,
+  userIdParamSchema,
+} from '../validations/profileValidation.js';
+
+import {
+  getMyProfileController,
+  getPublicProfileController,
+  updateProfileController,
+  uploadAvatarController,
+  uploadCoverPhotoController,
 } from '../controllers/profileController.js';
 
 const router = express.Router();
 
-router.get('/me', authenticateToken, getProfile);
-router.get('/:userID', authenticateToken, getProfileByUserID);
-router.put('/', authenticateToken, updateProfile);
+router.use(authenticateToken);
 
-router.post('/avatar', authenticateToken, upload.single('file'), uploadAvatar);
-router.post('/cover', authenticateToken, upload.single('file'), uploadCoverPhoto);
+router.get(
+  '/me',
+  getMyProfileController
+);
+
+router.patch(
+  '/me',
+  validate(updateProfileSchema),
+  updateProfileController
+);
+
+router.post(
+  '/avatar',
+  upload.single('avatar'),
+  uploadAvatarController
+);
+
+router.post(
+  '/cover-photo',
+  upload.single('coverPhoto'),
+  uploadCoverPhotoController
+);
+
+
+router.get(
+  '/:userId',
+  validate(
+    userIdParamSchema,
+    'params'
+  ),
+  getPublicProfileController
+);
 
 export default router;

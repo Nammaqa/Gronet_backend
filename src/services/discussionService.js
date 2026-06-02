@@ -29,17 +29,37 @@ export const getDiscussionsByGroup = async (groupId, page = 1, limit = 10) => {
   };
 };
 
+export const getAllDiscussions = async () => {
+  return await Discussion.findAll({
+    order: [['createdAt', 'DESC']],
+  });
+};
+
 export const getDiscussionById = async (id) => {
-  return await Discussion.findByPk(id);
+  const discussion = await Discussion.findByPk(id);
+
+  if (!discussion) {
+    const error = new Error('Discussion not found');
+    error.status = 404;
+    throw error;
+  }
+
+  return discussion;
 };
 
 export const updateDiscussion = async (id, userId, data) => {
   const discussion = await Discussion.findByPk(id);
 
-  if (!discussion) throw new Error('Discussion not found');
+  if (!discussion) {
+    const error = new Error('Discussion not found');
+    error.status = 404;
+    throw error;
+  }
 
   if (discussion.authorId !== userId) {
-    throw new Error('Unauthorized');
+    const error = new Error('Unauthorized');
+    error.status = 403;
+    throw error;
   }
 
   return await discussion.update(data);
@@ -48,11 +68,19 @@ export const updateDiscussion = async (id, userId, data) => {
 export const deleteDiscussion = async (id, userId) => {
   const discussion = await Discussion.findByPk(id);
 
-  if (!discussion) throw new Error('Discussion not found');
+  if (!discussion) {
+    const error = new Error('Discussion not found');
+    error.status = 404;
+    throw error;
+  }
 
   if (discussion.authorId !== userId) {
-    throw new Error('Unauthorized');
+    const error = new Error('Unauthorized');
+    error.status = 403;
+    throw error;
   }
 
   await discussion.destroy();
+
+  return { message: 'Discussion deleted successfully' };
 };
