@@ -1,11 +1,13 @@
-import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import { User } from '../models/index.js';
 
 const authenticateToken = async (req, res, next) => {
   try {
-    // Extract token from Authorization header
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+    const authHeader = req.headers.authorization;
+
+    const token =
+      authHeader &&
+      authHeader.split(' ')[1];
 
     if (!token) {
       return res.status(401).json({
@@ -14,119 +16,89 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    // Decode token
-    const decoded = jwt.decode(token);
+    const response = await axios.get(
+      `${process.env.AUTH_SERVICE_URL}/api/auth/validate-token`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        timeout: 5000,
+      }
+    );
 
-    if (!decoded) {
+    const {
+      userId,
+      name,
+      email,
+      role,
+    } = response.data;
+
+    if (!userId || !email) {
       return res.status(403).json({
         success: false,
-        message: 'Invalid or expired token',
+        message: 'Invalid token response',
       });
     }
 
-    // Extract user data from decoded token
-    const { enquiryId, name, email } = decoded;
+    const userIdStr = String(userId);
 
-    if (!enquiryId || !email) {
-      return res.status(403).json({
-        success: false,
-        message: 'Token must contain enquiryId and email',
+    let user = await User.findOne({
+      where: {
+        userID: userIdStr,
+      },
+    });
+
+    if (user) {
+      await user.update({
+        enquiryID: userIdStr,
+        userID: userIdStr,
+        email,
+        ...(name && {
+          displayName: name,
+        }),
+      });
+    } else {
+      user = await User.create({
+        enquiryID: userIdStr,
+        userID: userIdStr,
+        email,
+        displayName:
+          name || email.split('@')[0],
       });
     }
 
-    // Check if user exists by enquiryId
-const enquiryIdStr = String(enquiryId);
-
-let user = await User.findOne({
-  where: { userID: enquiryIdStr },
-});
-
-if (user) {
-  await user.update({
-    userID: enquiryIdStr,
-    email: email || user.email,
-    ...(name && { displayName: name }),
-  });
-} else {
-  user = await User.create({
-    enquiryID: enquiryIdStr,
-    userID: enquiryIdStr,
-    email,
-    displayName: name || email.split('@')[0],
-  });
-}
-    // Attach user to request object
     req.user = user;
 
+    req.auth = {
+      userId,
+      name,
+      email,
+      role,
+    };
+
     next();
+
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    return res.status(500).json({
+    console.error(
+      'Auth middleware error:',
+      error.response?.data ||
+      error.message
+    );
+
+    if (error.code === 'ECONNABORTED') {
+      return res.status(503).json({
+        success: false,
+        message:
+          'Authentication service timeout',
+      });
+    }
+
+    return res.status(401).json({
       success: false,
-      message: 'Authentication error',
-      error: error.message,
+      message:
+        'Invalid or expired token',
     });
   }
 };
 
 export default authenticateToken;
-
-
-
-
-// import jwt from 'jsonwebtoken';
-// import { User } from '../models/index.js';
-
-// const authenticateToken = async (req, res, next) => {
-//   try {
-
-//     const authHeader = req.headers['authorization'];
-//     const token = authHeader && authHeader.split(' ')[1];
-
-//     if (!token) {
-//       return res.status(401).json({
-//         success: false,
-//         message: 'Access token is required',
-//       });
-//     }
-
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     const { enquiryId, email } = decoded;
-
-//     if (!enquiryId || !email) {
-//       return res.status(403).json({
-//         success: false,
-//         message: 'Invalid token payload',
-//       });
-//     }
-
-//     const user = await User.findOne({
-//       where: { userID: enquiryId },
-//     });
-
-//     if (!user) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'User not found',
-//       });
-//     }
-
-//     req.user = {
-//       id: user.id,
-//       userID: user.userID,
-//       email: user.email,
-//     };
-
-//     next();
-//   } catch (error) {
-//     console.error('Auth middleware error:', error.message);
-
-//     return res.status(403).json({
-//       success: false,
-//       message: 'Invalid or expired token',
-//     });
-//   }
-// };
-
-// export default authenticateToken;
